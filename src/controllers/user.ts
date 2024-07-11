@@ -1,8 +1,8 @@
-import { User } from "../interfaces/user";
 import { users } from "../models/user";
 import * as UserService from "../services/user";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
+// controller to create new user
 export const createNewUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
@@ -14,12 +14,24 @@ export const createNewUser = async (req: Request, res: Response) => {
   };
 
   const result = await UserService.createUser(newUser);
+  // send success message
   res.status(result.statusCode).send(result);
 };
 
-export const getUserById = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = UserService.getUserById(id);
+// controller to fetch user by id
+export const getUserById = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const result = UserService.getUserById(id);
 
-  res.status(result.statusCode).send(result);
+    // send success message
+    res.status(result.statusCode).send(result);
+  } catch (e) {
+    // send error to generic error handler
+    next(e);
+  }
 };

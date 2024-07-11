@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// configurations for port, jwt-secret and tokens
 const config = {
   port: process.env.PORT,
   jwt_secret: process.env.JWT_SECRET,
