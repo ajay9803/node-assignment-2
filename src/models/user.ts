@@ -14,5 +14,5 @@ export const getUserById = (id: string) => {
 
 // fetch user by email
 export const getUserByEmail = (email: string) => {
-  return users.find((user) => (user.email = email));
+  return users.find((user) => (user.email === email));
 };
