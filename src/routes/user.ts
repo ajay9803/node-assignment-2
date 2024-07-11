@@ -5,10 +5,10 @@ import { authenticate } from "../middlewares/auth";
 const router = express();
 
 // create-user route to create new user
-router.post("/create-user", createNewUser);
+router.post("/", createNewUser);
 
 // get-user router to fetch user by id
 // make use of authenticate middleware to authenticate user for accessing further contents
-router.get("/get-userby-id/:id", authenticate, getUserById);
+router.get("/:id", authenticate, getUserById);
 
 export default router;

@@ -13,8 +13,8 @@ const router = express();
 // router methods on todos
 router.get("/", getAllTodos);
 router.get("/:id", getTodoById);
-router.post("/create-todo", createTodo);
-router.delete("/delete-todo/:id", deleteTodoById);
-router.patch("/update-todo/:id", updateTodo);
+router.post("/", createTodo);
+router.delete("/:id", deleteTodoById);
+router.put("/:id", updateTodo);
 
 export default router;
