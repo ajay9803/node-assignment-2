@@ -14,7 +14,7 @@ export const createUser = async (user: User) => {
 
   UserModel.createUser(newUser);
 
-  // return success-message 
+  // return success-message
   return {
     statusCode: 201,
     message: "User created successfully",
@@ -34,7 +34,7 @@ export const getUserById = (id: string) => {
       user: data,
     };
   } else {
-    // throw user-user-not-found error 
+    // throw user-user-not-found error
     const error = new NotFoundError("User not found.");
     throw error;
   }
@@ -44,6 +44,6 @@ export const getUserById = (id: string) => {
 export const getUserByEmail = (email: string) => {
   const data = UserModel.getUserByEmail(email);
 
-  // return user data: null / real data 
+  // return user data: null / real data
   return data;
 };

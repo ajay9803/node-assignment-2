@@ -1,4 +1,5 @@
 import config from "../config";
+import { InvalidError } from "../error/invalid_error";
 import { NotFoundError } from "../error/not_found_error";
 import { UnauthenticatedError } from "../error/unauthenticated_error";
 import { getUserByEmail } from "./user";
@@ -52,43 +53,47 @@ export const login = async (email: string, password: string) => {
 };
 
 export const refreshAccessToken = (refreshToken: string) => {
-  // split the token on empty spacing
-  const token = refreshToken.split(" ");
+  try {
+    // split the token on empty spacing
+    const token = refreshToken.split(" ");
 
-  // check if the bearer token is provided
-  if (token.length !== 2 || token[0] !== "Bearer") {
-    // throw error if token isn't provided
-    const error = new NotFoundError("No Bearer token provided.");
-    throw error;
+    // check if the bearer token is provided
+    if (token.length !== 2 || token[0] !== "Bearer") {
+      // throw error if token isn't provided
+      const error = new NotFoundError("No Bearer token provided.");
+      throw error;
+    }
+
+    let bearerToken = token[1];
+
+    // get data by verifying the token
+    const decodedToken = verify(bearerToken, config.jwt_secret!) as {
+      id: string;
+      name: string;
+      email: string;
+    };
+
+    if (!decodedToken) {
+      // throw error if token is null
+      const error = new UnauthenticatedError("Invalid token provided.");
+      throw error;
+    }
+
+    // create a payload from verified token
+    const payload = {
+      id: decodedToken.id,
+      name: decodedToken.name,
+      email: decodedToken.email,
+    };
+
+    // create new access token
+    const accessToken = sign(payload, config.jwt_secret!, {
+      expiresIn: config.accesstoken_expiry,
+    });
+
+    // return success message
+    return { statusCode: 200, accessToken: accessToken };
+  } catch (e) {
+    throw new InvalidError("Jwt token is expired.");
   }
-
-  let bearerToken = token[1];
-
-  // get data by verifying the token
-  const decodedToken = verify(bearerToken, config.jwt_secret!) as {
-    id: string;
-    name: string;
-    email: string;
-  };
-
-  if (!decodedToken) {
-    // throw error if token is null
-    const error = new UnauthenticatedError("Invalid token provided.");
-    throw error;
-  }
-
-  // create a payload from verified token
-  const payload = {
-    id: decodedToken.id,
-    name: decodedToken.name,
-    email: decodedToken.email,
-  };
-
-  // create new access token 
-  const accessToken = sign(payload, config.jwt_secret!, {
-    expiresIn: config.accesstoken_expiry,
-  });
-
-  // return success message 
-  return { statusCode: 200, accessToken: accessToken };
 };
