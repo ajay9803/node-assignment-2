@@ -5,6 +5,14 @@ import bcrypt from "bcrypt";
 
 // create new user
 export const createUser = async (user: User) => {
+  const existingUser = UserModel.getUserByEmail(user.email);
+
+  if (existingUser) {
+    return {
+      statusCode: 409,
+      message: "User already exists",
+    };
+  }
   // hash the password - to store hashed password to the users data
   const hashedPassword = await bcrypt.hash(user.password, 10);
   const newUser = {
